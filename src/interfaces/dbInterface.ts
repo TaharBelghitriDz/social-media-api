@@ -1,4 +1,4 @@
-import { Model, Document } from "mongoose";
+import { Model, Document, FilterQuery } from "mongoose";
 
 export interface userInterface extends Document {
   firstName: string;
@@ -13,5 +13,9 @@ export interface userInterface extends Document {
   posts?: { postId: string }[];
 }
 export interface userInterfaceModel extends Model<userInterface> {
-  AddUser: (args: userInterface, clb: (err: any) => void) => void;
+  AddUser: (args: userInterface, clb: (err: Error | null) => void) => void;
+  FindUser: (
+    query: FilterQuery<userInterface>,
+    clb: (err: Error | any, rslt: userInterface | null) => void
+  ) => void;
 }
