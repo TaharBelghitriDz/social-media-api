@@ -1,5 +1,7 @@
 import { RequestHandler } from "express";
 
-export const schemaVlaidation =
+const schemaValidation =
   (schema: object): RequestHandler =>
   (req, res, next) => {};
+
+export default schemaValidation;
