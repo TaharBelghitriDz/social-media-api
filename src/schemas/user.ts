@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { userLogin, userSignUp } from "../interfaces/userInterface";
 
-export const signUpSchema: JSONSchemaType<userLogin> = {
+export const loginSchema: JSONSchemaType<userLogin> = {
   type: "object",
   properties: {
     email: { type: "string", minLength: 10, maxLength: 50 },
@@ -11,11 +11,11 @@ export const signUpSchema: JSONSchemaType<userLogin> = {
   additionalProperties: false,
 };
 
-export const loginSchema: JSONSchemaType<userSignUp> = {
+export const signUpSchema: JSONSchemaType<userSignUp> = {
   type: "object",
   properties: {
-    firstName: { type: "string", minLength: 5, maxLength: 30 },
-    lastName: { type: "string", minLength: 5, maxLength: 50 },
+    firstName: { type: "string", minLength: 5, maxLength: 15 },
+    lastName: { type: "string", minLength: 5, maxLength: 30 },
     email: { type: "string", minLength: 10, maxLength: 50 },
     password: { type: "string", minLength: 8, maxLength: 50 },
     checkPassword: { type: "string", minLength: 8, maxLength: 50 },
