@@ -1,8 +1,7 @@
-import { Callback } from "mongodb";
-import mongoose, { SaveOptions } from "mongoose";
-import { userInterface } from "../interfaces/dbInterface";
+import mongoose, { Schema } from "mongoose";
+import { userInterface, userInterfaceModel } from "../interfaces/dbInterface";
 
-const userSchema = new mongoose.Schema<userInterface>({
+const userSchema: Schema<userInterface> = new mongoose.Schema<userInterface>({
   firstName: String,
   lastName: String,
   password: String,
@@ -26,10 +25,10 @@ userSchema.pre<userInterface>("validate", function (this: userInterface, next) {
   next();
 });
 
-userSchema.statics.userAdd = (args: userInterface, clb: (err: any) => void) =>
+userSchema.statics.AddUser = (args: userInterface, clb: (err: any) => void) =>
   new userDb(args).save(clb);
 
-export const userDb = mongoose.model<userInterface>(
+export const userDb = mongoose.model<userInterface, userInterfaceModel>(
   "socialMediaApiUser",
   userSchema
 );
