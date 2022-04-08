@@ -1,5 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, FilterQuery } from "mongoose";
 import { userInterface, userInterfaceModel } from "../interfaces/dbInterface";
+import { HashPassword } from "../utils/bcrypt";
 
 const userSchema: Schema<userInterface> = new mongoose.Schema<userInterface>({
   firstName: String,
@@ -15,18 +16,30 @@ const userSchema: Schema<userInterface> = new mongoose.Schema<userInterface>({
 });
 
 userSchema.pre<userInterface>("validate", function (this: userInterface, next) {
-  this.password = "";
   this.bio = "";
   this.cover = "";
   this.cover = "";
   this.followers = [];
   this.followers = [];
   this.posts = [];
-  next();
+  HashPassword(this.password, (err, hash) => {
+    if (err) throw err;
+    this.password = hash;
+    next();
+  });
 });
 
-userSchema.statics.AddUser = (args: userInterface, clb: (err: any) => void) =>
-  new userDb(args).save(clb);
+userSchema.statics.AddUser = (
+  args: userInterface,
+  clb: (err: Error | null) => void
+) => new userDb(args).save(clb);
+
+userSchema.statics.FindUser = function (
+  query: FilterQuery<userInterface>,
+  clb: (err: Error | any, rslt: userInterface | null) => void
+) {
+  return this.findOne(query, clb);
+};
 
 export const userDb = mongoose.model<userInterface, userInterfaceModel>(
   "socialMediaApiUser",
