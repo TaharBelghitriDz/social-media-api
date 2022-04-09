@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import Ajv from "ajv";
+import Ajv, { JSONSchemaType } from "ajv";
 
 const ajv = new Ajv();
 
@@ -13,3 +13,10 @@ const schemaValidation =
   };
 
 export default schemaValidation;
+
+export const emptyBody: JSONSchemaType<{}> = {
+  type: "object",
+  properties: {},
+  required: [],
+  additionalProperties: false,
+};

@@ -2,7 +2,7 @@ import mongoose, { Schema, FilterQuery } from "mongoose";
 import { userInterface, userInterfaceModel } from "../interfaces/dbInterface";
 import { HashPassword } from "../utils/bcrypt";
 
-const userSchema: Schema<userInterface> = new mongoose.Schema<userInterface>({
+const userSchema: Schema<userInterface> = new Schema<userInterface>({
   firstName: String,
   lastName: String,
   password: String,
