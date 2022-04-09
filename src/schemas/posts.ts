@@ -5,14 +5,9 @@ export const addPostSchema: JSONSchemaType<newPostInterface> = {
   type: "object",
   properties: {
     content: { type: "string", minLength: 1, maxLength: 4000 },
-    cover: {
-      type: "array",
-      items: { type: "string" },
-      maxItems: 5,
-      default: [],
-    },
+    cover: { type: "string", minLength: 10, maxLength: 1000 },
   },
-  required: ["content"],
+  required: ["content", "cover"],
   additionalProperties: false,
 };
 
@@ -20,13 +15,8 @@ export const addCommentSchema: JSONSchemaType<newPostInterface> = {
   type: "object",
   properties: {
     content: { type: "string", minLength: 1, maxLength: 4000 },
-    cover: {
-      type: "array",
-      items: { type: "string" },
-      maxItems: 5,
-      default: [],
-    },
+    cover: { type: "string", minLength: 10, maxLength: 1000 },
   },
-  required: ["content"],
+  required: ["content", "cover"],
   additionalProperties: false,
 };

@@ -13,15 +13,15 @@ import {
 } from "../controllers/posts";
 
 import { Router } from "express";
-import { checkUser } from "middlewares/auth";
-import schemaValidation, { emptyBody } from "schemas";
-import { authSchema } from "schemas/auth";
-import { addCommentSchema, addPostSchema } from "schemas/posts";
+import { checkUser } from "../middlewares/auth";
+import schemaValidation, { emptyBody } from "../schemas";
+import { authSchema } from "../schemas/auth";
+import { addCommentSchema, addPostSchema } from "../schemas/posts";
 
 const postRout = Router();
 
 // all of this routs need to valid user first
-postRout.use(schemaValidation(authSchema), checkUser);
+postRout.use(schemaValidation(authSchema, "headers"), checkUser);
 
 // post
 postRout.post("/add", schemaValidation(addPostSchema), addPost);

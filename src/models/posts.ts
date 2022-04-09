@@ -20,6 +20,12 @@ postSchema.statics.addPost = (
   clb: (err: Error | null) => void
 ) => new postDb(args).save(clb);
 
+postSchema.statics.editPost = (
+  filter: FilterQuery<postInterface>,
+  newData: postInterface,
+  clb: (err: Error, rslt: any) => void
+) => postDb.findOneAndUpdate(filter, newData, clb);
+
 postSchema.statics.findPost = (
   query: FilterQuery<postInterface>[],
   range: number = 0

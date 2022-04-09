@@ -31,9 +31,9 @@
     "paths": {
       "@/config/*": ["config/config"],
       "@/utils/*": ["utils/utils"],
-      "@/controllers/*": ["controllers/*"],
+      "@/controllers/*": ["controllers/controllers/*"],
       "@/interfaces/*": ["interfaces/interfaces"],
-      "@/models/*": ["models/models"],
+      "@/models/*": ["models/models/*"],
       "@/middlewares/*": ["middlewares/middlewares"],
       "@/routs/*": ["routs/routs"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,

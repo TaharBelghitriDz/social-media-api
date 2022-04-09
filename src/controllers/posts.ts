@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { newPostInterface } from "interfaces/postsInterdace";
-import { postDb } from "models/posts";
-import resHelper from "utils/resHelper";
+import { postDb } from "../models/posts";
+import resHelper from "../utils/resHelper";
 
 //post
 export const addPost: RequestHandler = (req, resF) => {
@@ -9,7 +9,11 @@ export const addPost: RequestHandler = (req, resF) => {
 
   const body: newPostInterface = req.body;
 
-  const addPost: any = { ...body, userId: res.locals.user._id as string };
+  const addPost: any = {
+    ...body,
+    userId: res.locals.user._id as string,
+    cover: body.cover.split(" "),
+  };
 
   postDb.addPost(addPost, (err) => {
     if (err) res.bad("somthing went wrong pleas try again");
@@ -20,13 +24,20 @@ export const addPost: RequestHandler = (req, resF) => {
 export const editPost: RequestHandler = (req, resF) => {
   const res = resHelper(resF);
   const body: newPostInterface = req.body;
+  const id = req.headers.id;
+  const addPost: any = {
+    ...body,
+    userId: res.locals.user._id as string,
+    cover: body.cover.split(" "),
+  };
 
-  const addPost: any = { ...body, userId: res.locals.user._id as string };
-
-  postDb.addPost(addPost, (err) => {
-    if (err) res.bad("somthing went wrong pleas try again");
-    else res.done("post added");
-  });
+  if (id)
+    postDb.editPost({ _id: id }, addPost, (err, rslt) => {
+      if (err) res.bad("somthing went wrong pleas try again");
+      else if (!rslt) res.bad("unvalid post ");
+      else res.done("updated");
+    });
+  else res.bad("unvalid post id");
 };
 
 export const removePost: RequestHandler = (req, resF) => {

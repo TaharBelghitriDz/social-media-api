@@ -1,21 +1,22 @@
-import resHelper from "utils/resHelper";
-import { tokenVrfy } from "utils/token";
-import { validateEmail } from "utils/validation";
+import resHelper from "../utils/resHelper";
+import { tokenVrfy } from "../utils/token";
+import { validateEmail } from "../utils/validation";
 import { RequestHandler } from "express";
-import { userLogin } from "interfaces/userInterface";
-import { userDb } from "models/user";
+import { userDb } from "../models/user";
+import { IncomingHttpHeaders } from "http";
+import { checkUserInterface } from "../interfaces/userInterface";
 
 export const checkUser: RequestHandler = (req, resF, next) => {
   const res = resHelper(resF);
-  let body: userLogin = req.body;
+  let head: IncomingHttpHeaders & checkUserInterface = req.headers as any;
 
   //check email
-  const checkEmail = validateEmail(body.email);
+  const checkEmail = validateEmail(head.email);
   if (!checkEmail) return res.bad("unvalid email");
 
-  const token = req.headers.token as string;
+  const token = head.token as string;
 
-  userDb.FindUser({ email: body.email }, (err, user) => {
+  userDb.FindUser({ email: head.email }, (err, user) => {
     const secretKey = process.env.SECRETKEY as string;
 
     if (err) res.bad("somthing went wrong");
