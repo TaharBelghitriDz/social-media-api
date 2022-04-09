@@ -10,7 +10,8 @@ import {
   removeCommnet,
   removePost,
   updateLike,
-} from "controllers/posts";
+} from "../controllers/posts";
+
 import { Router } from "express";
 import { checkUser } from "middlewares/auth";
 import schemaValidation, { emptyBody } from "schemas";
