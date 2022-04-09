@@ -3,9 +3,9 @@ import { Model, Document, FilterQuery } from "mongoose";
 export interface postInterface extends Document {
   userId: string;
   content: string;
-  cover?: string[];
-  likes?: { userId: string; type: "like" | "dislike" | "love" | "angry" }[];
-  coments?: {
+  cover: string[];
+  likes: { userId: string; type: "like" | "dislike" | "love" | "angry" }[];
+  coments: {
     userId: string;
     content: string;
     likes?: { userId: string; type: "like" | "dislike" | "love" | "angry" }[];
@@ -32,4 +32,22 @@ export interface postModelInterface extends Model<postInterface> {
   removePost: (
     query: FilterQuery<postInterface>[]
   ) => Promise<postInterface | null>;
+
+  editComment: (
+    args: {
+      postId: string;
+      userId: string;
+      newContent: string;
+    },
+    clb: (err: Error | null, data: postInterface | null) => void
+  ) => void;
+
+  removeCommnet: (
+    args: {
+      postId: string;
+      userId: string;
+      commentId: string;
+    },
+    clb: (err: Error | null, data: postInterface | null) => void
+  ) => void;
 }
