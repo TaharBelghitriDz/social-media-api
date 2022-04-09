@@ -20,8 +20,14 @@ postSchema.statics.addPost = (
   clb: (err: Error | null) => void
 ) => new postDb(args).save(clb);
 
-postSchema.statics.findPost = (query: FilterQuery<postInterface>[]) =>
-  postDb.findOne({ $or: query });
+postSchema.statics.findPost = (
+  query: FilterQuery<postInterface>[],
+  range: number = 0
+) =>
+  postDb
+    .findOne({ $or: query })
+    .limit(range + 10)
+    .skip(range);
 
 postSchema.statics.removePost = (query: FilterQuery<postInterface>[]) =>
   postDb.findOneAndRemove({ $or: query });
