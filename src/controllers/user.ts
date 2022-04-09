@@ -1,5 +1,5 @@
 import { userDb } from "../models/user";
-import { HashPassword, comparePassword } from "../utils/bcrypt";
+import { comparePassword } from "../utils/bcrypt";
 import resHelper from "../utils/resHelper";
 import { tokenSign } from "../utils/token";
 import { validateEmail } from "../utils/validation";
