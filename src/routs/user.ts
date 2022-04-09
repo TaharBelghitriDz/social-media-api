@@ -1,5 +1,5 @@
-import { Router } from "express";
 import { login, signUp } from "../controllers/user";
+import { Router } from "express";
 import schemaValidation from "../schemas";
 import { loginSchema, signUpSchema } from "../schemas/user";
 const userRout = Router();

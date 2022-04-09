@@ -1,8 +1,8 @@
-import { userDb } from "models/user";
-import { HashPassword } from "utils/bcrypt";
-import resHelper from "utils/resHelper";
-import { tokenSign } from "utils/token";
-import { validateEmail } from "utils/validation";
+import { userDb } from "../models/user";
+import { HashPassword, comparePassword } from "../utils/bcrypt";
+import resHelper from "../utils/resHelper";
+import { tokenSign } from "../utils/token";
+import { validateEmail } from "../utils/validation";
 import { RequestHandler } from "express";
 import { userInterface } from "interfaces/dbInterface";
 import { userLogin, userSignUp } from "interfaces/userInterface";
@@ -35,24 +35,20 @@ export const signUp: RequestHandler = (req, resF) => {
       if (body.lastName === user.lastName && body.firstName === user.firstName)
         res.bad("unvalid name");
     } else {
-      HashPassword(body.password, (err, hash) => {
-        if (err) res.bad("somthing bad happned");
+      const userData: any = { ...body };
+
+      delete userData.checkPassword;
+      userDb.AddUser(userData, (err) => {
+        if (err) res.bad("somthing went wrong");
         else {
-          const userData: any = { ...body, password: hash };
-          delete userData.checkPassword;
-          userDb.AddUser(userData, (err) => {
-            if (err) res.bad("somthing went wrong");
-            else {
-              const secretKey = process.env.SECRETKEY as string;
-              tokenSign({
-                str: body.email,
-                key: secretKey,
-                clb(err: any, token: any) {
-                  if (err) res.bad("somthing went wrong pleas try again");
-                  else res.done(token);
-                },
-              });
-            }
+          const secretKey = process.env.SECRETKEY as string;
+          tokenSign({
+            str: body.email,
+            key: secretKey,
+            clb(err: any, token: any) {
+              if (err) res.bad("login");
+              else res.done(token);
+            },
           });
         }
       });
@@ -78,13 +74,17 @@ export const login: RequestHandler = (req, resF) => {
     if (err) res.bad("somthing went wrong");
     else if (!user) res.bad("unvalid user");
     else
-      tokenSign({
-        str: body.email,
-        key: secretKey,
-        clb(err: any, token: any) {
-          if (err) res.bad("somthing went wrong pleas try again");
-          else res.done(token);
-        },
+      comparePassword(body.password, user.password, (err, rslt) => {
+        if (err || !rslt) res.bad("unvalid password");
+        else if (!err && rslt)
+          tokenSign({
+            str: body.email,
+            key: secretKey,
+            clb(err: any, token: any) {
+              if (err) res.bad("somthing went wrong pleas try again");
+              else res.done(token);
+            },
+          });
       });
   });
 };
