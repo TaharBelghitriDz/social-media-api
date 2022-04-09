@@ -3,6 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import { notFoundError, reqErrHandler } from "./middlewares/reqErorHandler";
+import "./config/db.config";
+
 dotenv.config({ path: __dirname + "/.env" });
 
 const app = express();
