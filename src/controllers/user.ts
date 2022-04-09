@@ -1,12 +1,12 @@
+import { userDb } from "models/user";
+import { HashPassword } from "utils/bcrypt";
+import resHelper from "utils/resHelper";
+import { tokenSign, tokenVrfy } from "utils/token";
+import { validateEmail } from "utils/validation";
 import { RequestHandler } from "express";
+import { userInterface } from "interfaces/dbInterface";
+import { userLogin, userSignUp } from "interfaces/userInterface";
 import { FilterQuery } from "mongoose";
-import { userInterface } from "../interfaces/dbInterface";
-import { userLogin, userSignUp } from "../interfaces/userInterface";
-import { userDb } from "../models/user";
-import { HashPassword } from "../utils/bcrypt";
-import resHelper from "../utils/resHelper";
-import { tokenSign, tokenVrfy } from "../utils/token";
-import { validateEmail } from "../utils/validation";
 
 export const signUp: RequestHandler = (req, resF) => {
   const res = resHelper(resF);
