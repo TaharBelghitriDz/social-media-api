@@ -1,4 +1,3 @@
-import { POINT_CONVERSION_UNCOMPRESSED } from "constants";
 import { postInterface, postModelInterface } from "interfaces/postsInterdace";
 import mongoose, { Schema, FilterQuery } from "mongoose";
 
@@ -74,6 +73,66 @@ postSchema.statics.removeCommnet = (
   postDb.findOne({ _id: args.postId }, (err: any, data: any) => {
     if (data) data.coments.pull({ _id: args.commentId, userId: args.userId });
     data.save(clb);
+  });
+
+postSchema.statics.addLike = (
+  args: {
+    id: string;
+    postId: string;
+    commentId?: string;
+    like: string;
+  },
+  res: any
+) =>
+  postDb.findOne({ _id: args.postId }).exec((err, data: any) => {
+    if (err) return res.bad("somthing bad happned please try again");
+    else if (data) {
+      if (args.commentId)
+        data.coments
+          .id(args.commentId)
+          .push({ userId: args.id, type: args.like });
+      else data.likes.push({ userId: args.id, type: args.like });
+
+      data.save((err: any) => {
+        if (err) return res.bad("somthing bad happned please try again");
+        return res.done("liked");
+      });
+    }
+    return res.bad("somthing bad happned please try again");
+  });
+
+postSchema.statics.updateLike = (
+  args: {
+    id: string;
+    postId: string;
+    commentId?: string;
+    like: string;
+    remove: boolean;
+  },
+  res: any
+) =>
+  postDb.findOne({ _id: args.postId }).exec((err, data: any) => {
+    if (err) return res.bad("somthing bad happned please try again");
+    else if (data) {
+      if (args.commentId)
+        data.coments
+          .id(args.commentId)
+          .pull({ userId: args.id, type: args.like });
+      else data.likes.pull({ userId: args.id, type: args.like });
+
+      if (!args.remove)
+        if (args.commentId)
+          data.coments
+            .id(args.commentId)
+            .push({ userId: args.id, type: args.like });
+        else data.likes.push({ userId: args.id, type: args.like });
+
+      data.save((err: any) => {
+        if (err) return res.bad("somthing bad happned please try again");
+        return res.done("liked");
+      });
+    }
+    return res.bad("somthing bad happned please try again");
   });
 
 export const postDb = mongoose.model<postInterface, postModelInterface>(

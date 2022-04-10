@@ -31,7 +31,7 @@ postRout.get("/find", schemaValidation(emptyBody), findPost);
 
 // comment
 postRout.post("/add/comment", schemaValidation(addCommentSchema), addComment);
-postRout.post("/edit/commnet", schemaValidation(addCommentSchema), editComment);
+postRout.post("/edit/comment", schemaValidation(addCommentSchema), editComment);
 postRout.get("/remove/comment", schemaValidation(emptyBody), removeCommnet);
 postRout.get("/find/comment", schemaValidation(emptyBody), findCommnets);
 

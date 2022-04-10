@@ -11,6 +11,7 @@ export interface postInterface extends Document {
     likes?: { userId: string; type: "like" | "dislike" | "love" | "angry" }[];
   }[];
 }
+export type likesTypes = "like" | "dislike" | "love" | "angry";
 
 export interface newPostInterface {
   content: string;
@@ -49,5 +50,25 @@ export interface postModelInterface extends Model<postInterface> {
       commentId: string;
     },
     clb: (err: Error | null, data: postInterface | null) => void
+  ) => void;
+
+  addLike: (
+    args: {
+      id: string;
+      postId: string;
+      commentId?: string;
+      like: string;
+    },
+    res: any
+  ) => void;
+  updateLike: (
+    args: {
+      id: string;
+      postId: string;
+      commentId?: string;
+      like: string;
+      remove: boolean;
+    },
+    res: any
   ) => void;
 }
