@@ -1,4 +1,4 @@
-import { profileBio, profileCover } from "controllers/profile";
+import { profileEdit, profileFollow } from "../controllers/profile";
 import { Router } from "express";
 import { checkUser } from "../middlewares/auth";
 import schemaValidation from "../schemas";
@@ -11,8 +11,9 @@ profileRout.use(schemaValidation(authSchema, "headers"), checkUser);
 
 // need the schema validation
 
-profileRout.post("/bio", profileBio);
-profileRout.post("/cover", profileCover);
-profileRout.post("/follws", profileBio);
+profileRout.post("/bio", profileEdit);
+profileRout.post("/cover", profileEdit);
+profileRout.post("/name", profileEdit);
+profileRout.post("/follws", profileFollow);
 
 export default profileRout;

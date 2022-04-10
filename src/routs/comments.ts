@@ -3,12 +3,12 @@ import {
   editComment,
   findCommnets,
   removeCommnet,
-} from "controllers/comments";
-import schemaValidation, { emptyBody } from "schemas";
-import { addCommentSchema } from "schemas/posts";
+} from "../controllers/comments";
+import schemaValidation, { emptyBody } from "../schemas";
+import { addCommentSchema } from "../schemas/posts";
 import { Router } from "express";
-import { authSchema } from "schemas/auth";
-import { checkUser } from "middlewares/auth";
+import { authSchema } from "../schemas/auth";
+import { checkUser } from "../middlewares/auth";
 
 const commentRout = Router();
 
