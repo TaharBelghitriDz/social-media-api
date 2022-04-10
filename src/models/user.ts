@@ -20,7 +20,7 @@ userSchema.pre<userInterface>("validate", function (this: userInterface, next) {
   this.cover = "";
   this.cover = "";
   this.followers = [];
-  this.followers = [];
+  this.follwing = [];
   this.posts = [];
   HashPassword(this.password, (err, hash) => {
     if (err) throw err;
@@ -36,7 +36,7 @@ userSchema.statics.AddUser = (
 
 userSchema.statics.FindUser = function (
   query: FilterQuery<userInterface>,
-  clb: (err: Error | any, rslt: userInterface | null) => void
+  clb?: (err: Error | any, rslt: userInterface | null) => void
 ) {
   return this.findOne(query, clb);
 };
