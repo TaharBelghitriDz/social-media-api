@@ -6,10 +6,12 @@ import resHelper from "../utils/resHelper";
 export const addLike: RequestHandler = (req, resF) => {
   const res = resHelper(resF);
   const id = res.locals.user._id as string;
-  const postId = req.body.postId as string;
+  const postId = req.query.postId as string;
   const commentId =
-    req.body.commentid === "none" ? undefined : req.body.commentid;
-  const like = req.body.like as string;
+    req.query.commentid === "none"
+      ? undefined
+      : (req.query.commentid as string);
+  const like = req.query.like as string;
 
   if (like && checkLikes(like))
     postDb.addLike({ like, id, commentId, postId }, res);
@@ -22,7 +24,7 @@ export const updateLike: RequestHandler = (req, resF) => {
   const postId = req.query.postId as string;
   const commentId = (req.query.coommntid as string) || undefined;
   const like = req.query.like as string;
-  const remove = req.body.remove === "yes";
+  const remove = req.query.remove === "yes";
 
   if (like && checkLikes(like))
     postDb.updateLike({ like, id, commentId, postId, remove }, res);
