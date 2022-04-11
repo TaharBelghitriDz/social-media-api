@@ -24,7 +24,7 @@ const messageSchema = new Schema<messageInterface>({
       content: String,
       date: {
         type: String,
-        default: `${Date}`,
+        default: `${Date()}`,
       },
       pic: {
         type: String,
@@ -51,19 +51,12 @@ messageSchema.statics.sendMessage = (
       return;
     })
     .then(() => {
-      messageDb.findOne(
-        {
-          $or: [
-            { otherId, userId: _id },
-            { userId: otherId, otherId: _id },
-          ],
-        },
-        (err: any, data: messageInterface | null) => {
-          if (err) throw { err: "unvalid user #3" };
-          if (!data) return;
-          return data;
-        }
-      );
+      return messageDb.findOne({
+        $or: [
+          { otherId: otherId, userId: _id },
+          { userId: otherId, otherId: _id },
+        ],
+      });
     })
     .then((data: any) => {
       if (data) {
@@ -82,9 +75,10 @@ messageSchema.statics.sendMessage = (
     });
 
 messageSchema.statics.reaction = (
-  content: string,
+  reaction: string,
   _id: string,
-  otherId: string
+  otherId: string,
+  messageId: string
 ) =>
   userDb
     .find({ $or: [{ _id: otherId }, { _id: _id }] })
@@ -94,23 +88,20 @@ messageSchema.statics.reaction = (
       return;
     })
     .then(() => {
-      messageDb.findOne(
-        {
-          $or: [
-            { otherId, userId: _id },
-            { userId: otherId, otherId: _id },
-          ],
-        },
-        (err: any, data: any) => {
-          if (err) throw { err: "unvalid user #3" };
-          if (!data) throw { err: "somthing wrong happend " };
-          data.chat.reaction = content;
-          data.save((err: any) => {
-            if (err) throw { err: "somthing wrong happend" };
-            return;
-          });
-        }
-      );
+      return messageDb.findOne({
+        $or: [
+          { otherId, userId: _id },
+          { userId: otherId, otherId: _id },
+        ],
+      });
+    })
+    .then((data: any) => {
+      if (!data) throw { err: "somthing wrong happend " };
+      data.chat.id(messageId).reaction = reaction;
+      data.save((err: any) => {
+        if (err) throw { err: "somthing wrong happend" };
+        return;
+      });
     });
 
 messageSchema.statics.removeMessage = (
@@ -144,6 +135,8 @@ messageSchema.statics.removeMessage = (
         }
       );
     });
+
+// fix the save err like send message
 
 export const messageDb = model<messageInterface, messageModelInterface>(
   "socialMediaApiMessage",
