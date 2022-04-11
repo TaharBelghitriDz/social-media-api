@@ -1,12 +1,16 @@
 import { Document, Model } from "mongoose";
 
 export interface messageInterface extends Document {
-  parent?: string;
-  content: string;
-  date: string;
+  userId: string;
+  otherId: string;
   seen: boolean;
-  pic?: string;
-  reaction?: "like" | "hate" | "love" | "angry" | "";
+  chat: {
+    parent?: string;
+    content: string;
+    date: string;
+    pic?: string;
+    reaction?: "like" | "hate" | "love" | "angry" | "";
+  };
 }
 
 export interface messageModelInterface extends Model<messageInterface> {
