@@ -19,4 +19,14 @@ export interface messageModelInterface extends Model<messageInterface> {
     id: string,
     otherId: string
   ) => Promise<messageModelInterface>;
+  reaction: (
+    content: string,
+    id: string,
+    otherId: string
+  ) => Promise<messageModelInterface>;
+  removeMessage: (
+    message: string,
+    id: string,
+    mesageId: string
+  ) => Promise<messageModelInterface>;
 }

@@ -81,6 +81,70 @@ messageSchema.statics.sendMessage = (
       });
     });
 
+messageSchema.statics.reaction = (
+  content: string,
+  _id: string,
+  otherId: string
+) =>
+  userDb
+    .find({ $or: [{ _id: otherId }, { _id: _id }] })
+    .then((data) => {
+      if (!data) throw { err: "unvalid user #1" };
+      if (data.length !== 2) throw { err: "unvalid user #2" };
+      return;
+    })
+    .then(() => {
+      messageDb.findOne(
+        {
+          $or: [
+            { otherId, userId: _id },
+            { userId: otherId, otherId: _id },
+          ],
+        },
+        (err: any, data: any) => {
+          if (err) throw { err: "unvalid user #3" };
+          if (!data) throw { err: "somthing wrong happend " };
+          data.chat.reaction = content;
+          data.save((err: any) => {
+            if (err) throw { err: "somthing wrong happend" };
+            return;
+          });
+        }
+      );
+    });
+
+messageSchema.statics.removeMessage = (
+  mesageId: string,
+  _id: string,
+  otherId: string
+) =>
+  userDb
+    .find({ $or: [{ _id: otherId }, { _id: _id }] })
+    .then((data) => {
+      if (!data) throw { err: "unvalid user #1" };
+      if (data.length !== 2) throw { err: "unvalid user #2" };
+      return;
+    })
+    .then(() => {
+      messageDb.findOne(
+        {
+          $or: [
+            { otherId, userId: _id, chat: { $elemMatch: { _id: mesageId } } },
+            {
+              userId: otherId,
+              otherId: _id,
+              chat: { $elemMatch: { _id: mesageId } },
+            },
+          ],
+        },
+        (err: any, data: messageInterface | null) => {
+          if (err) throw { err: "unvalid user #3" };
+          if (!data) throw { err: "unvalid user #3" };
+          return;
+        }
+      );
+    });
+
 export const messageDb = model<messageInterface, messageModelInterface>(
   "socialMediaApiMessage",
   messageSchema
