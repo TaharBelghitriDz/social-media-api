@@ -4,9 +4,6 @@ import {
 } from "../interfaces/messageInterface";
 import { Schema, model } from "mongoose";
 import { userDb } from "./user";
-import { userInterface } from "../interfaces/dbInterface";
-
-// you made a big mistake on db structure
 
 const messageSchema = new Schema<messageInterface>({
   userId: String,
@@ -105,38 +102,32 @@ messageSchema.statics.reaction = (
     });
 
 messageSchema.statics.removeMessage = (
-  mesageId: string,
+  messageId: string,
   _id: string,
   otherId: string
 ) =>
   userDb
     .find({ $or: [{ _id: otherId }, { _id: _id }] })
-    .then((data) => {
+    .then((data: any) => {
       if (!data) throw { err: "unvalid user #1" };
       if (data.length !== 2) throw { err: "unvalid user #2" };
       return;
     })
-    .then(() => {
-      messageDb.findOne(
+    .then(() =>
+      messageDb.findOneAndUpdate(
         {
           $or: [
-            { otherId, userId: _id, chat: { $elemMatch: { _id: mesageId } } },
-            {
-              userId: otherId,
-              otherId: _id,
-              chat: { $elemMatch: { _id: mesageId } },
-            },
+            { otherId, userId: _id },
+            { userId: otherId, otherId: _id },
           ],
         },
-        (err: any, data: messageInterface | null) => {
-          if (err) throw { err: "unvalid user #3" };
-          if (!data) throw { err: "unvalid user #3" };
-          return;
-        }
-      );
+        { $pull: { chat: { _id: messageId } } }
+      )
+    )
+    .then((data: messageInterface | null) => {
+      if (!data) throw { err: "unvalid user #3" };
+      return;
     });
-
-// fix the save err like send message
 
 export const messageDb = model<messageInterface, messageModelInterface>(
   "socialMediaApiMessage",

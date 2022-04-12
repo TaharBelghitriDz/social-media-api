@@ -1,21 +1,25 @@
 import { messageDb } from "../models/messages";
 import { Socket } from "socket.io";
+import {
+  reactionInterface,
+  sendMessageInterface,
+} from "interfaces/messageInterface";
 
 const sendMessage =
   (socket: Socket) =>
-  ({ content, otherId }: { otherId: string; content: string }) =>
+  ({ content, otherId }: sendMessageInterface) =>
     messageDb
       .sendMessage(content, socket.data._id, otherId)
       .then(() => socket.emit("sented"))
-      .catch(() => {
-        socket.emit("somthing went wrong");
+      .catch((err) => {
+        socket.emit("somthing went wrong #10");
       });
 
 const reaction =
   (socket: Socket) =>
-  ({ reaction, otherId }: { otherId: string; reaction: string }) =>
+  ({ reaction, otherId, messageId }: reactionInterface) =>
     messageDb
-      .reaction(reaction, socket.data._id, otherId)
+      .reaction(reaction, socket.data._id, otherId, messageId)
       .then(() => socket.emit("sented"))
       .catch(() => {
         socket.emit("somthing went wrong");
@@ -25,40 +29,42 @@ const removeMessage =
   (socket: Socket) =>
   ({ messageId, otherId }: { otherId: string; messageId: string }) =>
     messageDb
-      .sendMessage(messageId, socket.data._id, otherId)
+      .removeMessage(messageId, socket.data._id, otherId)
       .then(() => socket.emit("sented"))
-      .catch(() => {
+      .catch((err) => {
         socket.emit("somthing went wrong");
       });
 
 const getMessages =
   (socket: Socket) =>
-  (range: number = 0) =>
+  ({ range }: { range: number }) =>
     messageDb
       .find({
-        $or: [{ _id: socket.data._id }, { otherId: socket.data._id }],
+        $or: [{ userId: socket.data._id }, { otherId: socket.data._id }],
       })
-      .skip(0)
+      .skip(range)
       .limit(range + 10)
       .exec((err, data) => {
         if (err || !data) socket.emit("somthing wrong happend");
-        else socket.emit(`${data}`);
+        else socket.emit(JSON.stringify(data));
       });
 
 const findChats =
   (socket: Socket) =>
   ({ chatId, range }: { chatId: string; range: number }) =>
-    messageDb.find(
-      {
-        $or: [
-          { _id: socket.data._id, chat: { $elemMatch: { _id: chatId } } },
-          { otherId: socket.data._id, chat: { $elemMatch: { _id: chatId } } },
-        ],
-      },
-      { chat: { $slice: [range, range + 10] } }
-    );
-
-// there is a bug sometimes it create new chat instead of pushing message
+    messageDb
+      .findOne(
+        {
+          $or: [
+            { userId: socket.data._id, chat: { $elemMatch: { _id: chatId } } },
+            { otherId: socket.data._id, chat: { $elemMatch: { _id: chatId } } },
+          ],
+        },
+        { chat: { $slice: [range, range + 10] } }
+      )
+      .then((data) => {
+        socket.emit(JSON.stringify(data));
+      });
 
 const messageController: any = {
   sendMessage,

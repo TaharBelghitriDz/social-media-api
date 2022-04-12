@@ -10,6 +10,7 @@ const valableTarget = [
   "reaction",
   "removeMessage",
   "getMessages",
+  "findChats",
 ];
 
 export const socketRouter = (socket: Socket) =>
@@ -21,6 +22,7 @@ export const socketRouter = (socket: Socket) =>
         socket.emit("somthing wrong happend");
       else {
         const schema = messagesSchemas[target];
+
         const validate = ajv.compile(schema);
         const checkReq = validate(data);
         if (!checkReq) socket.emit("unvlid emit");
