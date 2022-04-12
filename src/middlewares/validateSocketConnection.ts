@@ -27,3 +27,22 @@ export default (
     });
   }
 };
+
+import { RateLimiterMemory } from "rate-limiter-flexible";
+
+const socketIoRateLimter = new RateLimiterMemory({
+  points: 5,
+  duration: 1,
+});
+
+export const socketIoRateLimterMiddleware = (
+  socket: Socket,
+  next: (err?: ExtendedError | undefined) => void
+) => {
+  try {
+    socketIoRateLimter.consume(socket.handshake.address);
+    next();
+  } catch {
+    next(new Error("too many requests"));
+  }
+};
