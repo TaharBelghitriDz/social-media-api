@@ -29,6 +29,7 @@
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.10",
+    "rate-limiter-flexible": "^2.3.6",
     "socket.io": "^4.4.1"
   },
   "devDependencies": {
