@@ -34,9 +34,9 @@ export const signUp: RequestHandler = (req, resF) => {
     else if (user) {
       if (body.lastName === user.lastName && body.firstName === user.firstName)
         res.bad("unvalid name");
+      else res.bad("unvalid email");
     } else {
       const userData: any = { ...body };
-
       delete userData.checkPassword;
       userDb.AddUser(userData, (err) => {
         if (err) res.bad("somthing went wrong");
